@@ -1,0 +1,28 @@
+<nav class="navbar navbar-dark bg-primary">
+    <a class="navbar-brand" href="/">Persistent ToDO List</a>
+        <form class=" ml-auto my-2 form-inline">
+            <span style="color:#FFF"> {{userLog}} </span>
+        {{#each args}}
+            <a class="ml-3 btn btn-outline-light" href="/{{link}}"> {{link}} </a>
+        {{/each}}
+        </form>
+</nav>  
+<div id="section" style="height:5rem; width:100%; padding-left:2em;">
+    <h1 style="height:5rem; line-height:5rem;"> Welcome {{userLog}}!</h1>    
+</div>
+<div id="game-area">
+    <div class="row">
+    {{#each tasks}}
+    <div class = "col-sm">
+        <div class='card' style='width: 18rem; margin:auto;'>
+            <div class='card-body'>
+                <h5 class='card-title'>TO_DO</h5>
+                <p class='card-text'>{{name}}</p>
+                <a href='#' class='card-link'>Mark As Done</a>
+                <a href='#' class='card-link'>Remove</a>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+    </div>
+</div>

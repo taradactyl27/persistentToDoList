@@ -1,0 +1,13 @@
+<nav class="navbar navbar-dark bg-primary">
+    <a class="navbar-brand" href="/">Persistent ToDO List</a>
+        <form class=" ml-auto my-2 form-inline">
+            <span style="color:#FFF"> {{userLog}} </span>
+        {{#each args}}
+            <a class="ml-3 btn btn-outline-light" href="/{{link}}"> {{link}} </a>
+        {{/each}}
+        </form>
+</nav>  
+<div id="section" style="height:3em;">
+    <h1> Persistent To Do List</h1>
+  </div>  
+</div>
