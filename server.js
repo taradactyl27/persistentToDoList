@@ -13,50 +13,6 @@ app.use(cookieParser());
 app.engine("handlebars", exphbs());
 app.set("view engine", "handlebars");
 
-fs.readFile('data.json', (err, data) => {
-    if (err) throw err;
-    let todoList = JSON.parse(data);
-    console.log(todoList);
-});
-/*
-axios.get('https://hunter-todo-api.herokuapp.com/user')
-  .then(function (response) {
-    // handle success
-    console.log(response);
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .finally(function () {
-    // always executed
-  });
-*/
-/*
-axios.get('https://hunter-todo-api.herokuapp.com/user?username=TEST_A')
-.then(function (response) {
-// handle success
-console.log(response);
-})
-.catch(function (error) {
-// handle error
-console.log(error);
-})
-.finally(function () {
-// always executed
-});
-*/
-
-/*
-  axios.post('https://hunter-todo-api.herokuapp.com/user', {
-    username: 'TEST_A',
-  })
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  }); */
 app.get('/', function (req, res) {
   console.log(req.cookies.userCookie)
   if(req.cookies.userCookie === undefined){
@@ -72,12 +28,62 @@ app.get('/', function (req, res) {
     axios.get('https://hunter-todo-api.herokuapp.com/todo-item', auth)
     .then(function (auth) {
       todoList = auth.data;
+      for(var i = 0; i< todoList.length; i++){
+        console.log(todoList[i].deleted)
+        if (todoList[i].deleted == true){
+          delete todoList[i]
+        }
+      }
+      console.log(todoList)
+      res.render("logged", {args:links, tasks:todoList, userLog:user});
     })
     .catch(function (error){
       console.log(error);
+      res.render("logged", {args:links, tasks:todoList, userLog:user});
     });
-    res.render("logged", {args:links, tasks:todoList, userLog:user});
+ 
   }
+})
+app.post('/remove',function(req, res){
+  token = req.cookies.userCookie.token;
+  var auth = {headers: {"Authorization":token}};
+  var id = req.body.id;
+  axios.delete('https://hunter-todo-api.herokuapp.com/todo-item/' + id, auth)
+  .then(function(task) {
+    console.log(task);
+    res.redirect('/');
+  })
+  .catch(function(error){
+    console.log(error);
+  });
+})
+app.post('/complete',function(req, res){
+  token = req.cookies.userCookie.token;
+  var auth = {headers: {"Authorization":token}};
+  var id = req.body.id;
+  axios.put('https://hunter-todo-api.herokuapp.com/todo-item/' + id, {"completed":true} ,auth)
+  .then(function(task) {
+    console.log(task);
+    res.redirect('/');
+  })
+  .catch(function(error){
+    console.log(error);
+  });
+})
+app.get('/promptItem', function(req, res){
+  res.render("prompt");
+})
+app.post('/addItem', function(req,res){
+  token = req.cookies.userCookie.token;
+  var auth = {headers: {"Authorization":token}};
+  task = req.body;
+  axios.post('https://hunter-todo-api.herokuapp.com/todo-item', task, auth)
+  .then(function(task) {
+    res.redirect('/');
+  })
+  .catch(function(error){
+    console.log(error);
+  });
 })
 app.get('/logout', function (req,res){
     res.clearCookie('userCookie');
@@ -94,14 +100,13 @@ app.post('/registerA', function(req,res) {
  })
  .catch(function (error) {
    console.log(error);
-   res.redirect("/register",{error:"User already exists!"});
+   res.render("register",{error:"User already exists!"});
  });
 });
 app.get('/login', function(req,res) {
   res.render("login");
 })
 app.post('/authorize', function (req, res) {
-    // Prepare output in JSON format
     user = req.body;
     var username = user.username;
     axios.post('https://hunter-todo-api.herokuapp.com/auth', user)
@@ -111,6 +116,7 @@ app.post('/authorize', function (req, res) {
     })
     .catch(function (error) {
       console.log(error);
+      res.render("login",{error:"User does not exist!"});
     });
  })
 var server = app.listen(8081, function () {

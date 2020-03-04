@@ -13,16 +13,32 @@
 <div id="game-area">
     <div class="row">
     {{#each tasks}}
-    <div class = "col-sm">
-        <div class='card' style='width: 18rem; margin:auto;'>
+    <div class = "col" deleted="{{deleted}}">
+        <div class='card' style='width: 18rem; margin:auto; margin-top: 1.5em;'>
             <div class='card-body'>
                 <h5 class='card-title'>TO_DO</h5>
-                <p class='card-text'>{{name}}</p>
-                <a href='#' class='card-link'>Mark As Done</a>
-                <a href='#' class='card-link'>Remove</a>
+                <p class='card-text' completed="{{completed}}" name="completes">{{content}}</p>
+                <div class="row">
+                    <div class="col-sm">
+                        <form action="/complete" method="POST">
+                            <input type="hidden" id="id" name="id" value="{{id}}"/>   
+                            <button type='submit' class='btn btn-outline-success'>Mark As Done</button>
+                        </form>
+                    </div>
+                    <div class="col-sm">
+                        <form action="/remove" method="POST">
+                            <input type="hidden" id="id" name="id" value="{{id}}"/>  
+                            <button type='submit' id="{{id}}" class='btn btn-outline-danger'>Remove</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     {{/each}}
     </div>
+    <div class="actions" style="text-align:center; height:5rem; width:100%; padding-top:5em;">
+        <a class="btn btn-outline-primary" href="/promptItem"> Add Task</a>
+    </div>
 </div>
+
